@@ -1,101 +1,213 @@
-# `OpenMP Primes` Samples
-This sample is designed to illustrate how to use 
-the OpenMP* API with the Intel® Fortran Compiler.
+# `OpenMP* Primes` Samples
 
-This program finds all primes in the first 40,000,000 integers, 
-the number of 4n+1 primes, and the number of 4n-1 primes in the same range. 
-It illustrates two OpenMP* directives to help speed up the code.
+The `OpenMP* Primes` sample is designed to illustrate how to use the OpenMP* API with the Intel® Fortran Compiler.
 
-  
-| Optimized for                     | Description
-|:---                               |:---
-| OS                                | macOS* with Xcode* installed 
-| Software                          | Intel&reg; Fortran Compiler
-| What you will learn               | How to build and run a Fortran OpenMP application using Intel Fortran Compiler
-| Time to complete                  | 10 minutes
+This program finds all primes in the first 40,000,000 integers, the number of
+4n+1 primes, and the number of 4n-1 primes in the same range. The sample
+demonstrates how to use two OpenMP* directives to help speed up code.
+
+
+| Area                     | Description
+|:---                      |:---
+| What you will learn      | How to build and run a Fortran OpenMP application using the Intel® Fortran Compiler
+| Time to complete         | 10 minutes
 
 ## Purpose
 
-This program finds all primes in the first 40,000,000 integers, the number of 4n+1 primes, 
-and the number of 4n-1 primes in the same range. It illustrates two OpenMP* directives 
-to help speed up the code.
+This program finds all primes in the first 40,000,000 integers, the number of
+4n+1 primes, and the number of 4n-1 primes in the same range. It shows how to use
+two OpenMP directives to help speed up the code.
 
-First, a dynamic schedule clause is used with the OpenMP* for a directive. 
-Because the DO loop's workload increases as its index get bigger, 
-the default static scheduling does not work well. Instead, dynamic scheduling 
-is used to account for the increased workload. 
-But dynamic scheduling itself has more overhead than static scheduling, 
-so a chunk size of 10 is used to reduce the overhead for dynamic scheduling.
+First, a dynamic schedule clause is used with the OpenMP for a directive.
+Because the workload of the DO loop increases as its index get bigger, the
+default static scheduling does not work well. Instead, dynamic scheduling
+accounts for the increased workload. Dynamic scheduling itself has more overhead
+than static scheduling, so a chunk size of 10 is used to reduce the overhead for
+dynamic scheduling.
 
-Second, a reduction clause is used instead of an OpenMP* critical directive 
-to eliminate lock overhead. A critical directive would cause excessive lock overhead 
-due to the one-thread-at-time update of the shared variables each time through the DO loop. 
-Instead, the reduction clause causes only one update of the shared variables once at the end of the loop.
+Second, a reduction clause is used instead of an OpenMP critical directive to
+eliminate lock overhead. Using a critical directive would cause excessive lock
+overhead due to the one-thread-at-time update of the shared variables each time
+through the DO loop. Instead, the reduction clause causes only one update of the
+shared variables once at the end of the loop.
 
-The sample can be compiled unoptimized (-O0 ), or at any level of 
-optimization (-O1 through -O3 ). Also, the following compiler options are needed.
+## Prerequisites
 
-The option -qopenmp enables compiler recognition of OpenMP* directives. 
-This option can also be omitted, in which case the generated executable will be a serial program.
+| Optimized for            | Description
+|:---                      |:---
+| OS                       | Linux*<br>Windows*
+| Software                 | Intel® Fortran Compiler
 
-The option -fpp enables the Fortran preprocessor.
-Read the Intel® Fortran Compiler Documentation for more information about these options.
+>**Note**: The Intel® Fortran Compiler is included in the [Intel® oneAPI HPC
+>Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) or available as a
+[stand-alone download](https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran).
 
 ## Key Implementation Details
-The Intel&reg; oneAPI Intel Fortran Compiler includes all libraries and headers necessary to compile and run OpenMP* enabled Fortran applications. Users simply use the -qopenmp compiler option to compile and link their OpenMP enabled applications. 
 
-## License  
-Code samples are licensed under the MIT license. See
-[License.txt](https://github.com/oneapi-src/oneAPI-samples/blob/master/License.txt) for details.
+The Intel Fortran Compiler includes all libraries and headers necessary to
+compile and run OpenMP-enabled Fortran applications.
 
-Third party program Licenses can be found here: [third-party-programs.txt](https://github.com/oneapi-src/oneAPI-samples/blob/master/third-party-programs.txt)
+Use the following options to compile the program versions.
 
-## Building the `Fortran OpenMP*` sample  
+- [`-qopenmp` (Linux) or `/Qopenmp` (Windows)](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/qopenmp-qopenmp.html) enables compiler recognition of OpenMP* directives. Omitting this
+  option results in a serial program.
+- [`-O[n]` (Linux) or `/O[n]` (Windows)](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/o-001.html) sets the optimization level from level 1 (`-O1`) to level 3 (`-O3`). You can disable all optimizations using `-O0` (Linux) or `/Od` (Windows). 
 
-### Experiment 1: Unoptimized build and run
-* Build openmp_samples
+>**Note**: You can find more information about these options in the *Compiler
+>Options* section of the [Intel® Fortran Compiler Developer Guide and
+>Reference](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/overview.html).
 
-        cd openmp_samples 
-        make clean 
-        make debug
+## Set Environment Variables
 
-   * Run the program
+When working with the command-line interface (CLI), you should configure the
+oneAPI toolkits using environment variables. Set up your CLI environment by
+sourcing the `setvars` script every time you open a new terminal window. This
+practice ensures that your compiler, libraries, and tools are ready for
+development.
 
-        make debug_run
+> **Note**: If you have not already done so, set up your CLI environment by
+> sourcing  the `setvars` script in the root of your oneAPI installation.
+>
+> Linux:
+> - For system wide installations in the default installation directory: `. /opt/intel/oneapi/setvars.sh`
+> - For private installations: ` . ~/intel/oneapi/setvars.sh`
+>
+> Windows:
+> - Under normal circumstances, you do not need to run the setvars.bat batch file. The terminal shortcuts 
+> in the Windows Start menu, Intel oneAPI command prompt for <target architecture> for Visual Studio <year>, 
+> set these variables automatically.
+>
+> For additional information, see [Use the Command Line on Windows](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/use-the-command-line-on-windows.html).
+>
+> For more information on configuring environment variables, see [Use the
+> setvars Script with Linux and Windows](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/specifying-the-location-of-compiler-components.html).
 
-   * What did you see?
+## Build the `OpenMP Primes` Sample
 
-     Did the debug, unoptimized code run slower? 
-     
-### Experiment 2: Default Optimized build and run 
+1. Change to the sample directory.
+2. Build debug and release versions of the program.
 
-   * Build openmp_samples
+   Linux:
 
-    make 
-   * Run the program
+   ```
+   make clean
+   make debug
+   make
+   ```
 
-    make run  
+   Windows:
 
-### Experiment 3: Controlling the number of threads
-By default, an OpenMP application creates and uses as many threads as the number of  "processors" in a system.  A "processor" is defined as the number of logical processors, which are twice the number of physical cores on hyperthreaded cores.
+   ```
+   build.bat
+   ```
 
-OpenMP uses the environment variable 'OMP_NUM_THREADS' to set the number of threads to use.  Try this!
+## Run the `OpenMP* Primes` Program
 
-    export OMP_NUM_THREADS=1
-    make run
-note the number of threads reported by the application.  Now try two threads:
+You can run different versions of the program to discover application runtime
+changes.
 
-    export OMP_NUM_THREADS=2
-    make run
-Did the make the application run faster?  Experiment with the number of threads and see how it affects performance.
+### Experiment 1: Run the Debug Version
 
-### Clean up 
-   * Clean the program  
-    make clean
+1. Run the program.
+
+   Linux:
+
+   ```
+   make debug_run
+   ```
+
+   Windows:
+
+   ```
+   debug_run.bat
+   ```
+
+   Notice the timestamp. With multi-threaded applications, use Elapsed Time to measure the time. CPU time is the time 
+   accumulated for all threads.
+
+### Experiment 2: Run the Optimized Version
+
+1. Run the program.
+   
+   Linux:
+
+   ```
+   make run
+   ```
+
+   Windows:
+
+   ```
+   run.bat
+   ```
+
+   Did the debug (unoptimized) version run slower?
+
+### Experiment 3: Change the Number of Threads
+
+By default, an OpenMP application creates and uses as many threads as the number
+of "processors" in a system. A "processor" is defined as the number of logical
+processors, which are twice the number of physical cores on hyperthreaded cores.
+
+OpenMP uses the environment variable `OMP_NUM_THREADS` to set the number of
+threads to use.
+
+1. Experiment with a single thread.
+
+   Linux:
+
+   ```
+   export OMP_NUM_THREADS=1`
+   make run
+   ```
+
+   Windows:
+
+   ```
+   set OMP_NUM_THREADS=1
+   run.bat
+   ```
+
+   Notice the number of threads reported by the application.
+
+2. Experiment with 2 threads.
+
+   Linux:
+
+   ```
+   export OMP_NUM_THREADS=2
+   make run
+   ``` 
+
+   Windows:
+
+   ```
+   set OMP_NUM_THREADS=2
+   run.bat
+   ```
+
+   Notice if the application ran faster with more threads.
+
+3. Experiment with the number of threads and see how changing the number of threads 
+   affects performance.
+
+4. On Linux clean the object and executable files.
+
+   ```
+   make clean
+   ```
 
 ## Further Reading
-Interested in learning more?  We have a wealth of information 
-on using OpenMP with the Intel Fortran Compiler in our 
-[OpenMP section of Developer Guide and Reference][1]
 
-[1]: https://software.intel.com/content/www/us/en/develop/documentation/fortran-compiler-developer-guide-and-reference/top/optimization-and-programming-guide/openmp-support.html "Developer Guide and Reference"
+Read about using OpenMP with the Intel® Fortran Compiler in the *OpenMP Support* section of the [Intel® Fortran Compiler
+Developer Guide and
+Reference](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/current/overview.html).
+
+## License
+
+Code samples are licensed under the MIT license. See
+[License.txt](https://github.com/oneapi-src/oneAPI-samples/blob/master/License.txt)
+for details.
+
+Third party program Licenses can be found here:
+[third-party-programs.txt](https://github.com/oneapi-src/oneAPI-samples/blob/master/third-party-programs.txt).
